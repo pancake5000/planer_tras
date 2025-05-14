@@ -1,0 +1,12 @@
+<h2>Edit Route: {{ route.name }}</h2>
+<img src="{{ route.background.image.url }}" alt="Background Image">
+<ul>
+    {% for point in points %}
+        <li>Point: ({{ point.x }}, {{ point.y }})</li>
+    {% endfor %}
+</ul>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Add Point</button>
+</form>
