@@ -1,0 +1,64 @@
+{% extends 'planer/base.html' %}
+
+{% block content %}
+<h2>Edit and View Route: {{ route.name }}</h2>
+<div class="background" style="position: relative;">
+    <img id="background-image" src="{{ route.background.image.url }}" alt="Background" style="width: 100%; display: block;">
+    <canvas id="route-canvas"></canvas>
+</div>
+
+<h3>Add Point</h3>
+{% if form %}
+<form method="post" style="margin-top: 0; margin-bottom: 0;">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" name="add_point">Add Point</button>
+</form>
+{% else %}
+<p><em>Form is not available.</em></p>
+{% endif %}
+
+<h3>Points</h3>
+<ul>
+    {% for point in points %}
+        <li>
+            Point ({{ point.x }}, {{ point.y }})
+            <form method="post" style="display: inline;">
+                {% csrf_token %}
+                <input type="hidden" name="point_id" value="{{ point.id }}">
+                <button type="submit" name="delete_point">Delete</button>
+            </form>
+        </li>
+    {% endfor %}
+</ul>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const image = document.getElementById('background-image');
+        const canvas = document.getElementById('route-canvas');
+        const points = [
+            {% for point in points %}
+                { x: {{ point.x }}, y: {{ point.y }} },
+            {% endfor %}
+        ];
+
+        image.onload = function () {
+            canvas.width = image.clientWidth;
+            canvas.height = image.clientHeight;
+
+            const ctx = canvas.getContext('2d');
+            ctx.strokeStyle = 'red';
+            ctx.lineWidth = 2;
+
+            if (points.length > 0) {
+                ctx.beginPath();
+                ctx.moveTo(points[0].x * canvas.width / 100, points[0].y * canvas.height / 100);
+                for (let i = 1; i < points.length; i++) {
+                    ctx.lineTo(points[i].x * canvas.width / 100, points[i].y * canvas.height / 100);
+                }
+                ctx.stroke();
+            }
+        };
+    });
+</script>
+{% endblock %}

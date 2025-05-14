@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit Route</title>
+</head>
+<body>
+    <h1>Edit Route: {{ route.name }}</h1>
+    <h2>Points</h2>
+    <ul>
+        {% for point in points %}
+            <li>
+                Point ({{ point.x }}, {{ point.y }})
+                <form method="post" style="display: inline;">
+                    {% csrf_token %}
+                    <input type="hidden" name="point_id" value="{{ point.id }}">
+                    <button type="submit" name="delete_point">Delete</button>
+                </form>
+            </li>
+        {% endfor %}
+    </ul>
+
+    <h2>Add Point</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" name="add_point">Add Point</button>
+    </form>
+
+    <a href="{% url 'view_route' route.id %}">View Route</a>
+</body>
+</html>

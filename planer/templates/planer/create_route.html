@@ -1,6 +1,10 @@
-<h2>Create Route</h2>
+{% extends 'planer/base.html' %}
+
+{% block content %}
+<h2>Create a New Route</h2>
 <form method="post">
     {% csrf_token %}
     {{ form.as_p }}
-    <button type="submit">Save</button>
+    <button type="submit">Create Route</button>
 </form>
+{% endblock %}

@@ -1,7 +1,14 @@
+{% extends 'planer/base.html' %}
+
+{% block content %}
 <h2>Your Routes</h2>
 <ul>
     {% for route in routes %}
-        <li>{{ route.name }} - <a href="{% url 'edit_route' route.id %}">Edit</a></li>
+        <li>
+            {{ route.name }} - 
+            <a href="{% url 'edit_and_view_route' route.id %}">Edit</a>
+        </li>
     {% endfor %}
 </ul>
 <a href="{% url 'create_route' %}">Create New Route</a>
+{% endblock %}

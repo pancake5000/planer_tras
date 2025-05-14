@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>View Route</title>
+    <style>
+        .background {
+            position: relative;
+        }
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Route: {{ route.name }}</h1>
+    <div class="background" style="position: relative;">
+        <img id="background-image" src="{{ route.background.image.url }}" alt="Background" style="width: 100%; display: block;">
+        <canvas id="route-canvas"></canvas>
+    </div>
+    <a href="{% url 'edit_route' route.id %}">Edit Route</a>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const image = document.getElementById('background-image');
+            const canvas = document.getElementById('route-canvas');
+            const points = [
+                {% for point in points %}
+                    { x: {{ point.x }}, y: {{ point.y }} },
+                {% endfor %}
+            ];
+
+            // Adjust canvas size to match the image
+            image.onload = function () {
+                canvas.width = image.clientWidth;
+                canvas.height = image.clientHeight;
+
+                const ctx = canvas.getContext('2d');
+                ctx.strokeStyle = 'red';
+                ctx.lineWidth = 2;
+
+                if (points.length > 0) {
+                    ctx.beginPath();
+                    ctx.moveTo(points[0].x * canvas.width / 100, points[0].y * canvas.height / 100);
+                    for (let i = 1; i < points.length; i++) {
+                        ctx.lineTo(points[i].x * canvas.width / 100, points[i].y * canvas.height / 100);
+                    }
+                    ctx.stroke();
+                }
+            };
+        });
+    </script>
+</body>
+</html>

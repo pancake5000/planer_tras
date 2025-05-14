@@ -21,8 +21,9 @@ from django.urls import path, include
 urlpatterns = [
     path("planer/", include("planer.urls")),
     path('admin/', admin.site.urls),
-    path('accounts/login/', auth_views.LoginView.as_view(), name='login'),
-    path('accounts/logout/', auth_views.LogoutView.as_view(), name='logout'),
+    # path('accounts/login/', auth_views.LoginView.as_view(), name='login'),   # REMOVE or comment out
+    # path('accounts/logout/', auth_views.LogoutView.as_view(), name='logout'), # REMOVE or comment out
+    # path('accounts/', include('django.contrib.auth.urls')),  # <-- REMOVE or COMMENT OUT this line
 ]
 
 from django.conf import settings
