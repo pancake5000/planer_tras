@@ -1,0 +1,20 @@
+{% extends 'planer/base.html' %}
+{% load static %}
+
+{% block content %}
+<h2>Create a new route on board: {{ board.name }}</h2>
+<form id="route-form" method="post">
+    {% csrf_token %}
+    <label for="route-name">Route name:</label>
+    <input type="text" id="route-name" name="route_name" value="{{ route_name }}" required>
+    <input type="hidden" name="route_json" id="route-json">
+    <button type="submit">Save Route</button>
+</form>
+<div id="grid-container"></div>
+<script>
+    window.CREATE_ROUTE_BOARD_ROWS = {{ board.rows }};
+    window.CREATE_ROUTE_BOARD_COLS = {{ board.cols }};
+    window.CREATE_ROUTE_DOTS = {{ dots|safe }};
+</script>
+<script src="{% static 'js/dist/create_route_on_board.js' %}"></script>
+{% endblock %}

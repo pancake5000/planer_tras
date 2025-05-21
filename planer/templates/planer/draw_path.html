@@ -1,0 +1,23 @@
+{% extends 'planer/base.html' %}
+{% load static %}
+
+{% block content %}
+<h2>Draw your path on: {{ board.name }}</h2>
+<p>Grid: {{ board.rows }} x {{ board.cols }}</p>
+<form id="path-form" method="post">
+    {% csrf_token %}
+    <label for="path-name">Path name:</label>
+    <input type="text" id="path-name" name="path_name" value="{{ path_name }}" required>
+    <input type="hidden" name="path_json" id="path-json">
+    <button type="submit">Save Path</button>
+</form>
+<div id="grid-container"></div>
+<!-- Color picker will be injected by TypeScript -->
+<script>
+    window.DRAW_BOARD_ROWS = {{ board.rows }};
+    window.DRAW_BOARD_COLS = {{ board.cols }};
+    window.DRAW_DOTS = {{ dots|safe }};
+    window.DRAW_PATH = {{ path|safe }};
+</script>
+<script src="{% static 'js/dist/draw_path.js' %}"></script>
+{% endblock %}

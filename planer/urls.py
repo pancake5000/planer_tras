@@ -13,7 +13,12 @@ urlpatterns = [
     path('api/', include('planer.api_urls')),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),    
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),    
-    path('logout/', views.CustomLogoutView.as_view(), name='logout'),    
+    path('logout/', views.logout_view, name='logout'),    
     path('login/', views.login_view, name='login'),    
     path('register/', views.register, name='register'),
+    path('board/create/', views.create_or_edit_board, name='create_board'),
+    path('board/<int:board_id>/edit/', views.create_or_edit_board, name='edit_board'),
+    path('board/<int:board_id>/delete/', views.delete_board, name='delete_board'),
+    path('board/<int:board_id>/draw/', views.draw_path, name='draw_path'),
+    path('board/<int:board_id>/create_route/', views.create_user_route_on_board, name='create_route_on_board'),
 ]

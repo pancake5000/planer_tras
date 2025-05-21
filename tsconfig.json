@@ -1,0 +1,9 @@
+{
+  "compilerOptions": {
+    "target": "ES6",                // Określenie wersji docelowej JavaScript
+    "module": "ES6",                // Wybranie systemu modułów
+    "outDir": "./static/js/dist/",  // Katalog wyjściowy dla skompilowanych plików JS
+    "sourceMap": true               // Włączenie map źródłowych
+  },
+  "include": ["src/**/*"]
+}

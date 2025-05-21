@@ -1,0 +1,76 @@
+{% extends 'planer/base.html' %}
+{% load static %}
+
+{% block content %}
+<h2>{% if board %}Edytuj planszę{% else %}Nowa plansza{% endif %}</h2>
+<form id="board-form" method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="hidden" name="dots_json" id="dots-json">
+    <button type="submit">Zapisz planszę</button>
+    {% if board %}
+        <a href="{% url 'delete_board' board.id %}" style="margin-left:2em;">Usuń planszę</a>
+    {% endif %}
+</form>
+
+<div style="margin: 1em 0;">
+    <label>Wybierz kolor pary:</label>
+    <select id="color-picker">
+        <option value="#e41a1c" style="color:#e41a1c;">Czerwony</option>
+        <option value="#377eb8" style="color:#377eb8;">Niebieski</option>
+        <option value="#4daf4a" style="color:#4daf4a;">Zielony</option>
+        <option value="#984ea3" style="color:#984ea3;">Fioletowy</option>
+        <option value="#ff7f00" style="color:#ff7f00;">Pomarańczowy</option>
+        <option value="#a65628" style="color:#a65628;">Brązowy</option>
+        <option value="#ffd700" style="color:#ffd700;">Żółty</option>
+        <option value="#00ced1" style="color:#00ced1;">Turkusowy</option>
+        <option value="#ff69b4" style="color:#ff69b4;">Różowy</option>
+        <option value="#228b22" style="color:#228b22;">Ciemnozielony</option>
+        <option value="#8b4513" style="color:#8b4513;">SaddleBrown</option>
+        <option value="#4682b4" style="color:#4682b4;">Stalowy niebieski</option>
+        <option value="#b22222" style="color:#b22222;">Ceglasty</option>
+        <option value="#00ff7f" style="color:#00ff7f;">Jasnozielony</option>
+        <option value="#ff1493" style="color:#ff1493;">Deep Pink</option>
+        <option value="#ffa500" style="color:#ffa500;">Pomarańczowy 2</option>
+        <option value="#800080" style="color:#800080;">Purpurowy</option>
+        <option value="#00bfff" style="color:#00bfff;">Niebieski jasny</option>
+        <option value="#c71585" style="color:#c71585;">Medium Violet Red</option>
+        <option value="#f5a623" style="color:#f5a623;">Żółtopomarańczowy</option>
+    </select>
+    <button type="button" id="add-pair-btn">Dodaj parę kropek</button>
+</div>
+<div id="grid-container"></div>
+
+{% if pairs %}
+<h3>Twoje pary kropek</h3>
+<table data-pairs-table>
+    <tr>
+        <th>Kolor</th>
+        <th>Punkt 1</th>
+        <th>Punkt 2</th>
+        <th>Usuń</th>
+    </tr>
+    {% for color, pair in pairs %}
+    <tr>
+        <td>
+            <span style="display:inline-block;width:24px;height:24px;border-radius:50%;background:{{ color }};"></span>
+        </td>
+        <td>({{ pair.0.row }}, {{ pair.0.col }})</td>
+        <td>({{ pair.1.row }}, {{ pair.1.col }})</td>
+        <td>
+            <form method="post" style="display:inline;">
+                {% csrf_token %}
+                <input type="hidden" name="delete_pair_color" value="{{ color }}">
+                <button type="submit">Usuń parę</button>
+            </form>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+{% endif %}
+
+<script>
+    window.INIT_DOTS = {{ dots|safe }};
+</script>
+<script src="{% static 'js/dist/edit_board.js' %}"></script>
+{% endblock %}

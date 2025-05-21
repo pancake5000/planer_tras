@@ -1,0 +1,22 @@
+{% extends 'planer/base.html' %}
+{% block content %}
+<h2>Twoje plansze</h2>
+<a href="{% url 'create_board' %}">Nowa plansza</a>
+<table>
+    <tr>
+        <th>Nazwa</th>
+        <th>Wymiary</th>
+        <th>Akcje</th>
+    </tr>
+    {% for board in boards %}
+    <tr>
+        <td>{{ board.name }}</td>
+        <td>{{ board.rows }} x {{ board.cols }}</td>
+        <td>
+            <a href="{% url 'edit_board' board.id %}">Edytuj</a>
+            <a href="{% url 'delete_board' board.id %}">Usuń</a>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}
