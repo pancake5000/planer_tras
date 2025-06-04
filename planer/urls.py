@@ -5,6 +5,7 @@ from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
 )
+from .views import sse_notifications
 
 urlpatterns = [
     path('', views.route_list, name='route_list'),
@@ -21,4 +22,5 @@ urlpatterns = [
     path('board/<int:board_id>/delete/', views.delete_board, name='delete_board'),
     path('board/<int:board_id>/draw/', views.draw_path, name='draw_path'),
     path('board/<int:board_id>/create_route/', views.create_user_route_on_board, name='create_route_on_board'),
+    path('sse/notifications/', sse_notifications, name='sse_notifications'),
 ]

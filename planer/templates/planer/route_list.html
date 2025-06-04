@@ -1,60 +1,71 @@
 {% extends 'planer/base.html' %}
+{% load static %}
 
 {% block content %}
-<h2>Your Paths</h2>
-<ul>
-    {% for path in user_paths %}
-        <li>
-            {{ path.name }} ({{ path.board.name }}, {{ path.path|length }} steps)
-            <a href="{% url 'draw_path' path.board.id %}?path_id={{ path.id }}">Edit Path</a>
-        </li>
-    {% empty %}
-        <li>No paths yet.</li>
-    {% endfor %}
-</ul>
+<div style="display: flex; align-items: flex-start;">
+    <div style="flex: 1 1 0%;">
+        <h2>Your Paths</h2>
+        <ul>
+            {% for path in user_paths %}
+                <li>
+                    {{ path.name }} ({{ path.board.name }}, {{ path.path|length }} steps)
+                    <a href="{% url 'draw_path' path.board.id %}?path_id={{ path.id }}">Edit Path</a>
+                </li>
+            {% empty %}
+                <li>No paths yet.</li>
+            {% endfor %}
+        </ul>
 
-<h2>Your Boards</h2>
-<table>
-    <tr>
-        <th>Name</th>
-        <th>Dimensions</th>
-        <th>Actions</th>
-    </tr>
-    {% for board in boards %}
-    <tr>
-        <td>{{ board.name }}</td>
-        <td>{{ board.rows }} x {{ board.cols }}</td>
-        <td>
-            <a href="{% url 'edit_board' board.id %}">Edit</a>
-            <a href="{% url 'delete_board' board.id %}">Delete</a>
-            <a href="{% url 'draw_path' board.id %}">New Path</a>
-        </td>
-    </tr>
-    {% endfor %}
-</table>
-<a href="{% url 'create_board' %}">Create New Board</a>
+        <h2>Your Boards</h2>
+        <table>
+            <tr>
+                <th>Name</th>
+                <th>Dimensions</th>
+                <th>Actions</th>
+            </tr>
+            {% for board in boards %}
+            <tr>
+                <td>{{ board.name }}</td>
+                <td>{{ board.rows }} x {{ board.cols }}</td>
+                <td>
+                    <a href="{% url 'edit_board' board.id %}">Edit</a>
+                    <a href="{% url 'delete_board' board.id %}">Delete</a>
+                    <a href="{% url 'draw_path' board.id %}">New Path</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+        <a href="{% url 'create_board' %}">Create New Board</a>
 
-<h2>Other Users' Boards</h2>
-<table>
-    <tr>
-        <th>Name</th>
-        <th>Dimensions</th>
-        <th>Owner</th>
-        <th>Actions</th>
-    </tr>
-    {% for board in other_boards %}
-    <tr>
-        <td>{{ board.name }}</td>
-        <td>{{ board.rows }} x {{ board.cols }}</td>
-        <td>{{ board.user.username }}</td>
-        <td>
-            <a href="{% url 'draw_path' board.id %}">New Path</a>
-        </td>
-    </tr>
-    {% empty %}
-    <tr>
-        <td colspan="4"><em>No boards from other users.</em></td>
-    </tr>
-    {% endfor %}
-</table>
+        <h2>Other Users' Boards</h2>
+        <table>
+            <tr>
+                <th>Name</th>
+                <th>Dimensions</th>
+                <th>Owner</th>
+                <th>Actions</th>
+            </tr>
+            {% for board in other_boards %}
+            <tr>
+                <td>{{ board.name }}</td>
+                <td>{{ board.rows }} x {{ board.cols }}</td>
+                <td>{{ board.user.username }}</td>
+                <td>
+                    <a href="{% url 'draw_path' board.id %}">New Path</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="4"><em>No boards from other users.</em></td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+    <div id="sse-log-container" data-sse-url="{% url 'sse_notifications' %}"
+         style="width:340px; min-width:240px; max-width:400px; margin-left:32px; background:#f9f9f9; border:1px solid #ccc; border-radius:6px; padding:12px; box-shadow:0 2px 8px #0001; height:fit-content; position:sticky; top:24px;">
+        <h3 style="margin-top:0;">Log zdarzeń (na żywo)</h3>
+        <ul id="sse-log" style="max-height:400px;overflow:auto;font-size:0.95em; margin-bottom:0;"></ul>
+    </div>
+</div>
+<script src="{% static 'js/dist/sse_log.js' %}"></script>
 {% endblock %}

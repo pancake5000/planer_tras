@@ -193,6 +193,10 @@ window.addEventListener('DOMContentLoaded', () => {
     colsInput.addEventListener('input', updateDims);
 
     form.addEventListener('submit', (e) => {
+        if(colorPicker.disabled){
+            e.preventDefault();
+            return;
+        }
         dotsJsonInput.value = JSON.stringify(dots);
     });
 

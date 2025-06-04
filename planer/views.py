@@ -5,10 +5,15 @@ from .models import BackgroundImage, Route, Point, Pair, GameBoard, Dot, UserPat
 from .forms import RouteForm, PointForm, UserRegistrationForm, PairForm, GameBoardForm
 from django.contrib.auth import logout, authenticate, login
 from django.contrib.auth.views import LogoutView
-from django.http import JsonResponse
+from django.http import JsonResponse, StreamingHttpResponse
 from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import condition
 import json
+import time
 from django.urls import reverse
+
+# Prosta globalna lista subskrybentów (w produkcji użyj kolejki/pubsub)
+subscribers = []
 
 @login_required
 def route_list(request):
@@ -16,12 +21,14 @@ def route_list(request):
     boards = GameBoard.objects.filter(user=request.user)
     user_paths = UserPath.objects.filter(user=request.user).select_related('board')
     other_boards = GameBoard.objects.exclude(user=request.user).select_related('user')
-    return render(request, 'planer/route_list.html', {
+    context = {
         'routes': routes,
         'boards': boards,
         'user_paths': user_paths,
         'other_boards': other_boards,
-    })
+        "show_sse_log": True,
+    }
+    return render(request, "planer/route_list.html", context)
 
 @login_required
 def create_route(request):
@@ -91,6 +98,7 @@ def create_or_edit_board(request, board_id=None):
     if board_id:
         board = get_object_or_404(GameBoard, id=board_id, user=request.user)
         dots = list(board.dots.values('row', 'col', 'color'))
+        # Group dots by color for pairs (only colors with exactly 2 dots)
         from collections import defaultdict
         color_map = defaultdict(list)
         for dot in dots:
@@ -104,8 +112,6 @@ def create_or_edit_board(request, board_id=None):
         board = None
         dots = []
         pairs = []
-
-    form = None  # Always define form
 
     if request.method == 'POST':
         # Handle pair deletion
@@ -123,7 +129,6 @@ def create_or_edit_board(request, board_id=None):
                 for color in color_map
                 if len(color_map[color]) == 2
             ]
-            form = GameBoardForm(instance=board)
         else:
             form = GameBoardForm(request.POST, instance=board)
             if form.is_valid():
@@ -260,3 +265,23 @@ def logout_view(request):
 
 class CustomLogoutView(LogoutView):
     next_page = 'login'  # Redirect to the login page after logout
+
+def sse_notifications(request):
+    def event_stream():
+        # Dodaj subskrybenta do globalnej listy
+        queue = []
+        subscribers.append(queue)
+        try:
+            while True:
+                # Keep-alive co 15s
+                yield ": keep-alive\n\n"
+                # Wysyłaj zdarzenia z kolejki
+                while queue:
+                    event = queue.pop(0)
+                    yield event
+                time.sleep(15)
+        finally:
+            subscribers.remove(queue)
+    response = StreamingHttpResponse(event_stream(), content_type='text/event-stream')
+    response['Cache-Control'] = 'no-cache'
+    return response
